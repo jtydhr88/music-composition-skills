@@ -1,0 +1,168 @@
+# ARR-SPEC 空模板（v1.0）
+# 规范见 ARR-SPEC.schema.md。写完按 mc-workflow §3.0 的 20 条逐条自查。
+# ★ 标记的是自查项；不过的条目改掉或写明理由。
+# ★ 可执行字段只用 ASCII：和弦写 maj7 / m7b5 / dim / b / #，不写 △ ø ° ♭ ♯；反复写 x2。
+
+# ★★ YAML 硬规则（agent 最常写坏的地方）：
+#   列表字段（roster / sound_stage / push_pull / subtraction_events / emotional_arc …）
+#   的 `- {…}` 条目下面**不能再挂一个 `note:` 键**——那是"列表里混进映射"，整份文件解析失败。
+#   要给列表加注释：用同级的 `xxx_note:`（如 `sound_stage_note:`），或写 `#` 行注释。
+#   写完自己读一遍缩进。
+
+spec_version: "1.0"
+
+meta:
+  title: ""
+  style_layer: "none"          # 基底风格的 L3 skill id，未建时填 none
+  style_layers: []             # ✦ 风格混合时填 [{skill, role: base|overlay, owns: [维度…]}]，单风格留空。见 schema §1.1.1
+  fusion_note: ""              # ✦ 混合时一句话说为什么成立
+  key: ""                      # ★ lint#20 语法 "<主音> <major|minor>"，如 "F# minor" "Bb major"
+  mode: ""                     # 可空；非自然大小调时填 dorian/mixolydian…（MusicXML 的九种）
+  meter: "4/4"
+  # meter_map: [{bar: 1, meter: "4/4"}, {bar: 33, meter: "3/4"}]   # 变拍写这里，不写在 note 里
+  tempo: 0
+  # tempo_map: [{bar: 1, bpm: 96}]
+  target_duration: "0:00"      # ★ lint#14 必须与 Σbars×拍速 一致（±10%）
+  deliverable: [full_mix]      # full_mix / stems / midi / musicxml / chordpro / abc
+
+# ─────────────────────────────────────────────────────────
+# 动笔前必填表 —— 四项不填齐不许往下写 form
+# ─────────────────────────────────────────────────────────
+intent:
+  one_thing: ""                # ★ 只干一件事。一句话，不许"既…又…"
+  reference_pair:              # ★ 恰好 2 项，borrow 必须写清借哪一点
+    - {track: "", borrow: ""}
+    - {track: "", borrow: ""}
+  listener_situation: ""       # ★ 在哪听、听第几遍、注意力多少
+  emotional_arc:               # ★ 必须有转折，一路向上等于没写
+    - {section: "", mood: "", value: 0}
+
+# ───────────────────────────────────────
+# 主题材料（★ mc-development 拥有；lint#18）。★ 填之前先读 mc-development，字段说明不够用
+# ───────────────────────────────────────
+material:
+  motif: ""                    # ★ 音程轮廓、节奏型、长度，用文字写到能认出来
+  motif_abc: ""                # 可选：同一动机的一到两小节 ABC（只要 L: 与音符），有则能导出成谱
+  character: ""                # 一句话性格
+  stated_in: []                # 原始陈述所在段落 id，至少一个
+  development_mode: ""         # 加工处理/展衍/对比，选一个主导（mc-development §5.1）
+
+# ─────────────────────────────────────────────────────────
+# 曲式表
+# ─────────────────────────────────────────────────────────
+form:
+  - id: ""                     # 全局唯一
+    name: ""                   # ★ lint#20 Intro/Verse/Pre-Chorus/Chorus/Post-Chorus/Bridge/Instrumental/Solo/Breakdown/Drop/Outro
+    bars: 0                    # ★ lint#3 全曲不许全是 8 的倍数
+    start_bar: 0               # ★ lint#2 必须首尾相接
+    harmony: ""                # "|VIm7 |IVmaj7 |I |V |"   ASCII：bVI、#IVm7b5、V/V
+    harmony_letters: ""        # ★ lint#19 "|F#m7 |Dmaj7 |A |E |"   双记是硬约定；一小节两个和弦用空格，不等分写拍数 Em7(3) A(1)
+    melody_register: ""        # 低/中低/中/中高/高
+    # melody_range: "A3-E5"    # 可选，实际音域，有则导出
+    development: ""            # ★ lint#18 repeat/sequence/extend/contract/fragment/vary/augment/counterpoint/new/recap；主次用 "+"
+    energy: 0                  # 0–10
+    events: []                 # [drums_in, bass_in, gtr_out]，只认 <roster_id>_in / _out
+    note: ""                   # 非对称设计写在这里；变拍写 meter_map
+
+# ─────────────────────────────────────────────────────────
+# 编曲
+# ─────────────────────────────────────────────────────────
+arrangement:
+  roster:
+    - id: ""
+      instrument: ""           # 具体音色，不许写"合成器"这种类别词
+      midi: {program: 0, bank: 0, channel: 1}   # GM 音色号；鼓组 channel 10；deliverable 含 midi/musicxml 时必填
+      role: ""                 # 律动/低频/和声铺底/织体/旋律/色彩/记忆点
+      band: ""                 # "1-3 kHz" 或 低频/中低/中高/高
+      entry: ""                # ★ 段落 id
+      exit: ""                 # ★ lint#7 至少一件不是 end
+      note: ""
+
+  depth_map:          # ✦ {roster_id: 前景|中景|背景}。听众凭高/响/快/变化率快判前景，只有"响"混音能调
+  bass_kick_relation: # ✦ {mode: 结合式|互答式|交织式, detail}。三选一必须写明
+  spectrum_budget:
+    - {band: "", owner: "", competitors: [], resolution: ""}   # 让频/错开音区/交替出现
+
+  energy_curve: {}             # ★ lint#4 key 集合==form ids；lint#5 至少一次下降
+
+  subtraction_events:          # ★ lint#6 至少 1 个；at 是结构化位置（schema §1.9），不是句子
+    - {at: {section: "", bar_offset: 0}, what: "", why: ""}
+
+  hooks:
+    vocal_hook: {where: "", shape: ""}
+    arrangement_hook:          # ★ lint#8 非人声记忆点，必填
+      what: ""
+      first_at: ""
+      recurs_at: []
+      abc: ""                  # 可选，一到两小节 ABC
+
+  groove:
+    feel: ""                   # straight/swing16/shuffle/halftime/2:1/3:1
+    push_pull:                 # ★ lint#11 至少一项 offset_ms != 0
+      - {part: "", offset_ms: 0, note: ""}
+    fill_policy:               # ★ lint#10 bars 不许是公差 4 的等差数列
+      bars: []
+      rationale: ""
+
+# ─────────────────────────────────────────────────────────
+# 演唱设计（mc-vocal-direction）—— 指挥生成模型怎么唱，不是真人录音指导
+# 人声是听众注意力最集中的地方，这一层是 AI 味的第二大来源（第一是词）
+# ─────────────────────────────────────────────────────────
+vocal:
+  persona: ""                  # ★ 这是谁在唱：性别、音区、质感、年代感；写"女声"视为未填
+  delivery: ""                 # 气声/实声/半声；咬字松紧
+  dynamics_by_section: {}      # ★ lint#15 至少两个不同值，禁止全程同一力度；0–10，导出按 schema §1.5 映 ppp–fff
+  phrasing: []                 # [{line: "", timing: "拖 60ms"/"抢 30ms", why: ""}]
+  breath_points: []            # [{section: "", line: 1, after_syllable: 4, note: ""}]；导出为 breath-mark
+  ad_libs: []                  # [{at: {section: ""}, what: ""}]；★ 禁止均匀撒
+  chorus_variation: ""         # ★ lint#16 副歌三遍怎么各不相同
+  stacking: ""                 # 和声/加倍堆几层、在哪几句进
+  register_arc: ""             # 与 form[].melody_register 一致
+
+# ─────────────────────────────────────────────────────────
+# 混音意图（只写意图，EQ/压缩/母带归库三）
+# ─────────────────────────────────────────────────────────
+mix_intent:
+  mood: ""                     # ★ 一句话，对其余决定有否决权
+  sound_stage: []              # [{id: "", pan: 0, depth: 前景|中景|背景}]；pan 取 -100..100，负左正右
+  ducking_map:
+    - {section: "", who_yields: "", band: "", to: ""}
+  dynamics:
+    target_DR_dB: 0
+    notes: []                  # "哪一段必须比副歌小 x dB"
+  width_map: {}                # ★ lint#12 至少两个不同值
+  loudness_target: ""          # "-9 LUFS integrated"
+
+# ─────────────────────────────────────────────────────────
+# 编译目标
+# ─────────────────────────────────────────────────────────
+render:
+  suno:
+    style_prompt: ""           # ★ lint#13 非空；忌 epic/emotional/beautiful 这类无信息词
+    # section_tags: []         # 由 form[].name 派生，不必手填；手填则必须与 form 一致
+    exclude: []
+    knobs: {model: "", weirdness: "", style_influence: ""}
+  yue:
+    abc: ""           # ✦ 可直接喂 YuE2GenerateMusic 的 ABC 乐谱（mc-symbolic-score 产出）
+    genre_tags: ""
+    structure: []
+    ref_audio: null
+  midi:
+    instrument_map: {}         # {roster_id: {name: "VST 或采样库名", program: 0, bank: 0, channel: 1}}；GM 号以 roster[].midi 为准
+  musicxml:
+    lead_sheet: true           # 人声领奏谱：旋律、和弦、歌词、段落、力度、换气
+    parts: []                  # 额外分谱的 roster id
+  chordpro:
+    transpose: 0
+
+# ─────────────────────────────────────────────────────────
+# 人工自检（自动项由 lint 跑）
+# ─────────────────────────────────────────────────────────
+checks:
+  self_audit:
+    - "[ ] one_thing 念出来是一句话，不是两件事拼的"
+    - "[ ] 两个参照各借的点不重叠"
+    - "[ ] arrangement_hook 不看谱能哼出来"
+    - "[ ] 至少一段的 melody_register 与相邻段落明显不同"
+    - "[ ] 全曲有一处该说的地方没说（留白），写明在哪："
+  exemptions: []               # 豁免 lint 某条时，在此写明条号与理由

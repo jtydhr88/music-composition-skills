@@ -1,0 +1,20 @@
+{
+  "name": "music-composition",
+  "description": "27 skills in six layers: workflow and the ARR-SPEC contract; general craft (melody, harmony, progressions, modulation, rhythm, form, counterpoint); arrangement craft (architecture, orchestration including Chinese folk orchestra, texture, rhythm section, sound design, vocal direction, mix intent); eight style layers (J-pop, city pop & R&B, jazz, Mandarin pop, EDM, rock band, cinematic, hip-hop) each with a transfer table and declared fusion ownership; execution (compile to Suno/YuE2/MIDI, symbolic score, AI-tell audit); and a corpus layer of measured recordings. Plain text, no tooling required; answers in the language you ask in",
+  "version": "1.0.0",
+  "author": {
+    "name": "terry"
+  },
+  "license": "MIT",
+  "keywords": [
+    "music",
+    "composition",
+    "arranging",
+    "orchestration",
+    "harmony",
+    "songwriting",
+    "mixing",
+    "suno"
+  ],
+  "skills": "./skills"
+}

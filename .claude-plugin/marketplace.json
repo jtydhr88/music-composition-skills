@@ -1,0 +1,16 @@
+{
+  "name": "music-composition-skills",
+  "owner": {
+    "name": "terry"
+  },
+  "metadata": {
+    "description": "Skills distilled from 50 books on orchestration, harmony, form, counterpoint, mixing and style practice, plus 62 arrangements measured from multitrack recordings — covering composing and arranging popular music end to end, from intent to a spec sheet a generation backend can execute"
+  },
+  "plugins": [
+    {
+      "name": "music-composition",
+      "source": "./plugins/music-composition",
+      "description": "27 skills in six layers: workflow and the ARR-SPEC contract; general craft (melody, harmony, progressions, modulation, rhythm, form, counterpoint); arrangement craft (architecture, orchestration including Chinese folk orchestra, texture, rhythm section, sound design, vocal direction, mix intent); eight style layers (J-pop, city pop & R&B, jazz, Mandarin pop, EDM, rock band, cinematic, hip-hop) each with a transfer table and declared fusion ownership; execution (compile to Suno/YuE2/MIDI, symbolic score, AI-tell audit); and a corpus layer of measured recordings. Plain text, no tooling required; answers in the language you ask in"
+    }
+  ]
+}

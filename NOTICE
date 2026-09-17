@@ -1,0 +1,62 @@
+NOTICE
+
+## What the MIT license covers
+
+The MIT license in LICENSE covers the original work in this repository: the
+six-layer architecture and the way the skills are cut apart, the ARR-SPEC
+schema and its template, the backend capability format, the numbered
+principles, the checklists and self-check tables, the boundary and transfer
+tables, the style-fusion ownership rules, the frontmatter and file
+conventions, and the README text in both languages. That part is free to use,
+modify and redistribute, commercial use included.
+
+## What it does not cover
+
+LICENSE cannot grant rights in material that belongs to someone else. The
+following is quoted or described in this repository and is not relicensed by
+it:
+
+1. **Quotations.** Passages from the orchestration, harmony, form,
+   counterpoint, arranging, mixing and style books listed under "Source books"
+   in the README. Copyright in those texts stays with their authors,
+   translators, editors and publishers. The excerpts in the `reference.md`
+   files are short quotations kept for study and commentary. Redistributing
+   them beyond that is the redistributor's own responsibility; MIT does not
+   cover it.
+
+2. **Translations.** A Chinese translation of a foreign work holds its own
+   copyright, belonging to the translator and the publisher, separate from the
+   original. This applies to the Chinese editions of Adler, Schoenberg,
+   Sposobin, Levine, Izhaki, Howard & Angus and the Japanese arranging books.
+
+3. **Musical examples and figure references.** Where a skill cites a figure or
+   a musical example by number and page, that is a pointer into the book, not
+   a reproduction of it. No scores, no engraved examples and no audio are
+   redistributed here.
+
+4. **Measured data from recordings.** The corpus layer stores structure and
+   parameters measured from multitrack recordings — section boundaries, bar
+   counts, energy curves, entry and exit events, harmonic degrees, dynamics
+   figures. It stores no audio, no copied notation and no lyrics. Measurements
+   of a recording are facts about it, but these tables exist to send you to the
+   music, not to replace it.
+
+5. **Backend and product names.** Suno, YuE2, ACE-Step, Stable Audio, MiniMax
+   and any other backend named in `backends.yaml` are the marks of their
+   respective owners. They are named to describe interoperability, and naming
+   them implies no endorsement in either direction. Model weights carry their
+   own licenses — some of them non-commercial — and this repository grants no
+   rights in them.
+
+## Rights holders
+
+The quotations in this repository are made for study and commentary, kept
+short, and attributed with source and page. If you hold rights in quoted
+material and believe a passage goes beyond that, open an issue at
+https://github.com/jtydhr88/music-composition-skills/issues and it will be
+shortened or removed.
+
+## Buy the books
+
+Every skill's "附：来源" section names the books it rests on, with page
+numbers. The tables are an index into those books, not a substitute for them.

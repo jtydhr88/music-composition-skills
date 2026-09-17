@@ -1,0 +1,208 @@
+# 生成后端能力档案 —— 数据，不是 skill
+#
+# 加一个新模型 = 在这里加一个块，**不动任何 skill**。
+# `mc-render-compile` 读这份档案决定怎么编译 ARR-SPEC；
+# 算照做率时读 honors 决定哪些项计分。
+#
+# ★ honors 的三个取值，决定照做率怎么算：
+#     exact —— 后端能精确执行这个字段 → 计分，不达标就是它没做到
+#     hint  —— 只能作为提示影响生成    → 计分，但权重打折
+#     none  —— 后端根本不接受这个字段  → **排除计分**，标注"本后端不支持"
+#   把 none 的项算成 0 分是错的：Suno 从来没被告知精确和弦，
+#   拿"和弦没跟上"扣它的分等于惩罚它做不到的事。
+#
+# ★ transport 记录"这个后端通常跑在哪"，是数据，不是前提。
+#   本库的读者是 agent：mc-render-compile 产出的是各后端的输入值（prompt / ABC / 参数），
+#   用户用命令行、Python API 还是 ComfyUI 这类节点式载体去执行，由用户环境决定。
+#   取值：hosted（托管服务）/ local（本地权重）。known_carriers 列出已知能跑它的载体，仅供参考。
+#
+# 调研日期：2026-09-15
+
+version: 2
+
+backends:
+
+  # ═══════════════════════════════════════════════════════════
+  - id: yue2
+    name: "YuE2 (3B)"
+    transport: local
+    known_carriers:
+      comfyui: [audio_yue2_text2music, audio_yue2_music_cover]   # 参考：该载体的模板名
+    note: >
+      ★ 唯一能让 ARR-SPEC 被「执行」而不是「提示」的后端。
+      它分两步：符号规划（模型自己写 ABC）→ 从 ABC 合成音频。
+      **把第一步旁路掉**，把我们从 ARR-SPEC 编译出来的 ABC 直接送进第二步。
+      凡支持 YuE2 的载体都能这样接（官方脚本；ComfyUI 有原生节点）。
+      这是 mc-symbolic-score 的第一落点。
+      ★ 实测（2026-09-17）：注入的 ABC 用 L:1/32、人声线写在小写音名区、带 w: 行；L:1/16 会提前停一半，大写音区词会唱成含混元音。whisper 识别率：直出 76%、编译谱 56%，差距在旋律密度；细则见 mc-symbolic-score §6b。
+    license:
+      code: Apache-2.0
+      weights: CC-BY-NC-4.0
+      commercial_ok: false        # ★ 权重非商用，出街前必须确认
+    model_file: yue2_3b_int8_convrot.safetensors
+    accepts:
+      style_prompt: prose
+      lyrics: text
+      symbolic_score: abc               # ★ 别的后端都没有
+      reference_audio: "cover 模板支持（保留原旋律换风格）"
+      seed: true
+    honors:
+      meta.key: exact
+      meta.tempo: exact
+      meta.meter: exact
+      form.bars: exact
+      form.harmony: exact
+      form.name: exact
+      arrangement.roster: hint
+      arrangement.energy_curve: hint
+      vocal: hint
+      mix_intent: none
+    upstream_skill: >
+      官方仓库自带 skills/yue2-music/（SKILL.md 格式，含"检查音乐不变量"）。
+      ★ 不要重写——我们写 ARR-SPEC→ABC 的适配器，模型操作的知识引用它们的。
+
+  # ═══════════════════════════════════════════════════════════
+  - id: minimax-music-3
+    name: "MiniMax Music 3"
+    transport: local
+    known_carriers:
+      comfyui: [audio_minimax_music_3]   # 参考：该载体的模板名
+    note: >
+      托管 API 已对新用户关闭，但存在本地权重版
+      （ComfyUI 等载体原生支持），准入限制对本地版不适用。
+      官方描述：从文本 prompt 生成完整 5 分钟歌曲，结构稳定。
+    license:
+      commercial_ok: "权重许可待核"
+    accepts:
+      style_prompt: prose
+      lyrics: text
+      symbolic_score: false
+      reference_audio: "托管版支持 cover；本地版待核"
+    honors:
+      meta.tempo: hint
+      meta.key: hint
+      form.bars: none
+      form.harmony: none
+      form.name: hint
+      arrangement: hint
+      vocal: hint
+      mix_intent: none
+
+  # ═══════════════════════════════════════════════════════════
+  - id: ace-step-1.5
+    name: "ACE-Step 1.5 XL（Base / Turbo / SFT / 4B-LLM / AIO）"
+    transport: local
+    templates:
+      - audio_ace_step1_5_xl_base
+      - audio_ace_step1_5_xl_turbo      # 蒸馏版，快
+      - audio_ace_step1_5_xl_sft        # 可调 CFG，提示词贴合度最可控
+      - audio_ace_step_1_5_split_4b     # 4B LLM 版，音乐理解更强
+      - audio_ace_step_1_5_checkpoint   # AIO
+    note: >
+      ★ 原架构完全漏掉的一族。一个模型五个变体，**变体本身就是可调的旋钮**：
+      Turbo 用来快速试规格、SFT 用 CFG 调提示词贴合度、4B-LLM 版理解力最强。
+      做 AB 时这比换模型更好控——同族内变量少。
+    accepts:
+      style_prompt: "风格标签 ＋ 散文"
+      lyrics: text
+      symbolic_score: false
+      cfg: true                         # ★ SFT 版可调，直接影响"听不听话"
+      seed: true
+    honors:
+      meta.tempo: hint
+      meta.key: hint
+      form.bars: none
+      form.harmony: none
+      form.name: hint
+      arrangement: hint
+      vocal: hint
+      mix_intent: none
+
+  # ═══════════════════════════════════════════════════════════
+  - id: stable-audio-3
+    name: "Stable Audio 3.0 Medium"
+    transport: local
+    known_carriers:
+      comfyui: [audio_stable_audio_3_medium, audio_stable_audio_3_medium_base]   # 参考：该载体的模板名
+    note: >
+      偏音效与器乐，不是整歌后端。用途：单独生成 arrangement_hook 用的
+      标志性音色、riser／impact 这类音响事件，再回填进别的后端的编制里。
+      有的载体模板会先用一个 LLM 扩写 prompt。
+    accepts:
+      style_prompt: prose
+      lyrics: false                     # ★ 没有人声
+      duration: true
+      seed: true
+      category: true
+    honors:
+      meta.tempo: hint
+      form: none
+      arrangement.hooks: hint           # 只对单个音响事件有意义
+      vocal: none
+      mix_intent: none
+
+  # ═══════════════════════════════════════════════════════════
+  - id: suno
+    name: "Suno"
+    transport: hosted                   # 托管服务，没有本地权重
+    note: >
+      控制力最弱、成品最润。只能给散文式风格描述加段落标签；
+      调性、和声、小节数全部只能"提示"，模型爱听不听。
+    license:
+      commercial_ok: "看订阅档位，出街前自行确认"
+    accepts:
+      style_prompt: prose
+      lyrics: text
+      section_tags: true
+      exclude_tags: true
+      symbolic_score: false
+    honors:
+      meta.tempo: hint
+      meta.key: hint
+      meta.meter: none
+      form.bars: none                   # ★ 说不动它，别拿这个扣分
+      form.harmony: none                # ★ 同上
+      form.name: hint
+      arrangement.roster: hint
+      arrangement.energy_curve: hint
+      vocal: hint
+      mix_intent: none
+    strategy: >
+      控制不了就别硬控：把精力放在风格描述的信息密度和段落标签序列上，
+      然后靠 best-of-N ＋ 照做率排序来挑，而不是指望一次说服它。
+
+  # ═══════════════════════════════════════════════════════════
+  - id: symbolic
+    name: "符号路径：ABC / MIDI / MusicXML → 音源渲染"
+    transport: local
+    note: >
+      LLM 直出符号乐谱，交给音源渲染。**完全确定、完全可控**，
+      代价是没有人声、音色取决于音源。两个用途：
+      ①日式 MIDI 打ち込み 工作流本来就是这个形态；
+      ②AB 的**控制变量基准**——同一份规格渲染出来永远一样。
+      ABC ↔ MusicXML ↔ MIDI 可互转，所以 mc-symbolic-score 一个发射器
+      同时服务 YuE2 的 ABC 输入和这条路。
+    license: {commercial_ok: true}
+    accepts:
+      symbolic_score: [abc, midi, musicxml]
+    honors:
+      meta.key: exact
+      meta.tempo: exact
+      meta.meter: exact
+      form.bars: exact
+      form.harmony: exact
+      arrangement.roster: exact
+      arrangement.energy_curve: exact   # velocity / CC 可精确写
+      vocal: none
+      mix_intent: none
+
+# ═══════════════════════════════════════════════════════════
+# 配套工具（不是生成后端，但属于同一条链路）
+tools:
+  - id: audio-separation
+    transport: any
+    known_carriers: {demucs: cli, comfyui: utility-audioseparation}
+    note: >
+      ★ 分轨：人声／贝斯／鼓／其余。
+      人声审计的四条 AI 味判据（力度是否全程一致、副歌三遍是否雷同、换气、ad-lib）
+      都要先把人声轨分出来。用哪个分轨工具由用户环境决定。

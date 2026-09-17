@@ -1,0 +1,99 @@
+# ARR-SPEC 示例 ⓪：反例 —— "无 skill 引导时模型会写成什么样"
+#
+# 用途：反面样本（17 条自查里应当有 8 条不过）；AB 实验的 A 组素材。
+# 这份规格不是瞎编的：它把 Suno 的每一个默认值都照抄了一遍——
+# 段落全是 8 的倍数、能量一路向上、编制从头到尾不变、一个循环到底、
+# fill 每 4 小节一个、全对齐网格、宽度恒定、时长永远 3:30。
+# 每一条都"看起来没毛病"，合起来就是一耳朵的 AI 味。
+
+spec_version: "1.0"
+
+meta:
+  title: "Midnight Dreams（反例）"
+  style_layer: "none"
+  key: "C major"
+  mode: "ionian"
+  meter: "4/4"
+  tempo: 120
+  target_duration: "3:30"        # ← 与 96 小节推算的 3:12 有偏差，但在 10% 内，第 14 条会过
+  deliverable: [full_mix]
+
+intent:
+  one_thing: "一首关于爱与失去、同时也关于希望与梦想的歌。"   # ← 两件事拼的，人工项不过
+  reference_pair:
+    - {track: "The Weeknd - Blinding Lights", borrow: ""}      # ← 只写歌名，不写借哪一点
+    - {track: "", borrow: ""}
+  listener_situation: ""
+  emotional_arc:
+    - {section: A1, mood: "伤感", value: 3}
+    - {section: C1, mood: "爆发", value: 8}
+
+material:
+  motif: "没有可辨认的动机：每段旋律各写各的，听众记住的只有副歌的歌词"
+  character: ""
+  stated_in: []
+
+form:
+  - {id: I,  name: "Intro",      bars: 8,  start_bar: 1,  harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 2, events: [], note: ""}
+  - {id: A1, name: "Verse",      bars: 16, start_bar: 9,  harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 3, events: [], note: ""}
+  - {id: B1, name: "Pre-Chorus", bars: 8,  start_bar: 25, harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 5, events: [], note: ""}
+  - {id: C1, name: "Chorus",     bars: 16, start_bar: 33, harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 6, events: [], note: ""}
+  - {id: A2, name: "Verse",      bars: 16, start_bar: 49, harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 7, events: [], note: ""}
+  - {id: C2, name: "Chorus",     bars: 16, start_bar: 65, harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 8, events: [], note: ""}
+  - {id: D,  name: "Bridge",     bars: 8,  start_bar: 81, harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 9, events: [], note: ""}
+  - {id: C3, name: "Chorus",     bars: 8,  start_bar: 89, harmony: "|I |V |VIm |IV |", harmony_letters: "|C |G |Am |F |", melody_register: "中", development: new, energy: 10, events: [], note: ""}
+
+arrangement:
+  roster:
+    - {id: drums,   instrument: "鼓",     role: "律动",     band: "全频", entry: I, exit: end, note: ""}
+    - {id: bass,    instrument: "贝斯",   role: "低频",     band: "低频", entry: I, exit: end, note: ""}
+    - {id: piano,   instrument: "钢琴",   role: "和声铺底", band: "中频", entry: I, exit: end, note: ""}
+    - {id: pad,     instrument: "合成器", role: "色彩",     band: "中高频", entry: I, exit: end, note: ""}
+    - {id: vocal,   instrument: "人声",   role: "旋律",     band: "中频", entry: I, exit: end, note: ""}
+
+  spectrum_budget: []
+
+  energy_curve: {I: 2, A1: 3, B1: 5, C1: 6, A2: 7, C2: 8, D: 9, C3: 10}   # ← 严格单调递增
+
+  subtraction_events: []          # ← 一个都没有
+
+  hooks:
+    vocal_hook: {where: "副歌", shape: "朗朗上口"}
+    arrangement_hook: {what: "", first_at: "", recurs_at: []}   # ← 空
+
+  groove:
+    feel: "straight"
+    push_pull:
+      - {part: drums, offset_ms: 0, note: ""}
+      - {part: bass,  offset_ms: 0, note: ""}                   # ← 全对齐网格
+    fill_policy:
+      bars: [8, 12, 16, 20, 24, 28]                             # ← 每 4 小节一个
+      rationale: "标准过门"
+
+mix_intent:
+  ducking_map: []
+  dynamics: {target_DR_dB: 6, notes: []}
+  width_map: {I: wide, A1: wide, B1: wide, C1: wide, A2: wide, C2: wide, D: wide, C3: wide}  # ← 恒定
+  loudness_target: "-8 LUFS integrated"
+
+render:
+  suno:
+    style_prompt: "emotional pop ballad, beautiful melody, epic chorus, high quality"   # ← 全是无信息词
+    section_tags: ["[Intro]", "[Verse]", "[Chorus]", "[Bridge]", "[Outro]"]             # ← 5 项 ≠ 8 段
+    exclude: []
+    knobs: {}
+  yue:
+    genre_tags: "pop, emotional"
+    structure: []
+    ref_audio: null
+  midi:
+    instrument_map: {}
+
+checks:
+  self_audit:
+    - "[ ] one_thing 念出来是一句话，不是两件事拼的"
+    - "[ ] 两个参照各借的点不重叠"
+    - "[ ] arrangement_hook 不看谱能哼出来"
+    - "[ ] 至少一段的 melody_register 与相邻段落明显不同"
+    - "[ ] 全曲有一处该说的地方没说（留白），写明在哪："
+  exemptions: []

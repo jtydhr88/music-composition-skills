@@ -1,0 +1,53 @@
+# example-02 —— ★ 风格混合样本：rap + 中国风（《桃花扇》式）
+#
+# 只为演示 meta.style_layers 的分工表与 lint #17。form/arrangement 等段落是缩略的示意，
+# 不是完整规格（所以别的自查条目会挂），只看 #17。
+#
+# 混合机制不依赖具体风格 skill 是否存在。
+
+spec_version: "1.0"
+meta:
+  title: "扇面（示意）"
+  style_layer: mc-style-chinese-pop
+  style_layers:
+    - {skill: mc-style-chinese-pop, role: base,    owns: [harmony, melody, color_instruments, vocal_delivery_chorus, form]}
+    - {skill: mc-style-hiphop,      role: overlay, owns: [groove, low_end, vocal_delivery_verse]}
+  fusion_note: "主歌 rap 给叙事密度，副歌五声旋律给记忆点；民乐采样只做色彩层，律动交给 808——两边各占的维度不重叠"
+  key: "D minor"
+  meter: "4/4"
+  tempo: 88
+  target_duration: "1:33"
+  deliverable: [full_mix]
+intent:
+  one_thing: "一把扇子从定情信物变成证物的那一下"
+  reference_pair:
+    - {track: "汪苏泷《桃花扇》", borrow: "只借『主歌 rap、副歌唱』的段落分工"}
+    - {track: "周杰伦《青花瓷》", borrow: "只借副歌五声旋律落在 la 上的收法"}
+  listener_situation: "手机外放，第一遍"
+  emotional_arc: [{section: A1, mood: 叙述, value: 3}, {section: C1, mood: 哀, value: 7}, {section: A2, mood: 冷, value: 4}]
+material:
+  motif: "主歌首句的三音下行动机（小三度加大二度），落在弱拍起、强拍收，一拍半长"
+  character: "压着的、不肯抬头"
+  stated_in: [A1]
+
+form:
+  - {id: A1, name: Verse,  bars: 14, start_bar: 1,  harmony: "|Im |bVII |Im |V7 |", harmony_letters: "|Dm |C |Dm |A7 |", development: new, energy: 3}
+  - {id: C1, name: Chorus, bars: 8,  start_bar: 15, harmony: "|Im |bVI |bIII |V7 |", harmony_letters: "|Dm |Bb |F |A7 |", development: extend, energy: 7}
+  - {id: A2, name: Verse,  bars: 12, start_bar: 23, harmony: "|Im |bVII |Im |V7 |", harmony_letters: "|Dm |C |Dm |A7 |", development: repeat+vary, energy: 4}
+arrangement:
+  roster:
+    - {id: k808,   midi: {program: 0, bank: 0, channel: 10}, instrument: "808 kick + sub", role: 低频, band: "低频", entry: A1, exit: end}
+    - {id: guzheng, midi: {program: 107, bank: 0, channel: 2}, instrument: "古筝采样，只做句尾花", role: 色彩, band: "中高", entry: C1, exit: C1}
+    - {id: vox,    midi: {program: 53, bank: 0, channel: 1}, instrument: "男声，主歌 rap 副歌唱", role: 旋律, band: "中高", entry: A1, exit: end}
+  energy_curve: {A1: 3, C1: 7, A2: 4}
+  subtraction_events: [{at: {section: A2}, what: "撤 808，只剩古筝泛音+人声", why: "证物段要冷"}]
+  hooks: {arrangement_hook: {what: "古筝三音下行 la-sol-mi 只在副歌句尾", first_at: C1, recurs_at: [C1]}}
+  groove: {feel: halftime, push_pull: [{part: vox, offset_ms: -15, note: "rap 抢拍"}], fill_policy: {bars: [14, 21], rationale: "段落切换前"}}
+vocal:
+  persona: "男声，中低音区，主歌说话式，副歌真声"
+  delivery: {A1: "rap，辅音用力", C1: "唱，气声偏多", A2: "rap 更贴麦更轻"}
+  dynamics_by_section: {A1: 5, C1: 8, A2: 3}
+  chorus_variation: "只有一遍副歌，示意"
+mix_intent: {mood: "冷、干、扇骨一样的硬", dynamics: {target_DR_dB: 9}, width_map: {A1: narrow, C1: wide, A2: narrow}, loudness_target: "-10 LUFS"}
+render: {suno: {style_prompt: "示意"}}
+checks: {self_audit: [], exemptions: []}
