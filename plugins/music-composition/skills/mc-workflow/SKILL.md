@@ -189,7 +189,7 @@ description: Entry point and router for the music composition library (作曲编
 | 6 | `subtraction_events` ≥ 1？ | `subtraction_events` |
 | 7 | 每件乐器有 `entry`；至少一件 `exit` 不是 `end`？ | `roster` |
 | 8 | `arrangement_hook.what` 非空？ | `hooks` |
-| 9 | 至少一个非 Intro/Outro 段有调外和弦或转调标记？ | `form[].harmony` |
+| 9 | 至少一个非 Intro/Outro 段有调外和弦或转调标记？（小调里 `bIII`／`bVI`／`bVII` 是本调和弦，不算） | `form[].harmony` |
 | 10 | `fill_policy.bars` 不是公差 4 的等差数列？ | `groove` |
 | 11 | `push_pull` 至少一项 `offset_ms ≠ 0`，且每项是 `{part, offset_ms, note}` 字典？ | `groove` |
 | 12 | `width_map` 至少两种取值？ | `mix_intent` |

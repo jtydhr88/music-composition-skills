@@ -313,7 +313,7 @@ meta:
 | 6 | `subtraction_events` ≥ 1 | 只会加不会减 |
 | 7 | `roster` 每项有 `entry`；至少一项 `exit != end` | 编制从头到尾不变 |
 | 8 | `arrangement_hook.what` 非空 | 没有非人声记忆点 |
-| 9 | 至少一个非 Intro/Outro 段落的 `harmony` 含调外和弦或转调标记 | 一个循环到底 |
+| 9 | 至少一个非 Intro/Outro 段落的 `harmony` 含调外和弦或转调标记（小调里 `bIII`／`bVI`／`bVII` 是自然小调的本调和弦，不算调外） | 一个循环到底 |
 | 10 | `fill_policy.bars` 不是公差为 4 的等差数列 | fill 刻板 |
 | 11 | `groove.push_pull` 至少一项且 `offset_ms != 0` | 网格化 |
 | 12 | `mix_intent.width_map` 至少两个不同值 | 立体声宽度恒定 |
